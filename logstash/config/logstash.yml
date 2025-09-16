@@ -1,0 +1,20 @@
+http.host: "0.0.0.0"
+path.config: /usr/share/logstash/pipeline
+path.logs: /usr/share/logstash/logs
+
+# X-Pack Monitoring
+xpack.monitoring.enabled: true
+xpack.monitoring.elasticsearch.hosts: [ "http://elasticsearch:9200" ]
+xpack.monitoring.elasticsearch.username: ${ELASTIC_USER}
+xpack.monitoring.elasticsearch.password: ${ELASTIC_PASSWORD}
+
+# Pipeline settings
+pipeline.workers: 2
+pipeline.batch.size: 125
+pipeline.batch.delay: 50
+
+# Dead Letter Queue
+dead_letter_queue.enable: true
+
+# JVM Options
+# Note: LS_JAVA_OPTS is set in docker-compose.yml

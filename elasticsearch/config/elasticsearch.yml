@@ -1,0 +1,41 @@
+cluster.name: ${CLUSTER_NAME}
+node.name: ${HOSTNAME}
+network.host: 0.0.0.0
+discovery.type: ${DISCOVERY_TYPE}
+
+# X-Pack settings
+xpack.security.enabled: true
+xpack.security.http.ssl:
+  enabled: false
+xpack.security.transport.ssl:
+  enabled: false
+
+# Monitoring
+xpack.monitoring.collection.enabled: true
+
+# Logging
+logger.org.elasticsearch: info
+logger.index.search.slowlog: trace
+logger.index.indexing.slowlog: trace
+
+# Memory
+bootstrap.memory_lock: true
+
+# Network
+http.port: 9200
+http.cors.enabled: true
+http.cors.allow-origin: "*"
+http.cors.allow-headers: X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization
+
+# Thread pools
+# Using default values for thread pools as they are optimized for most use cases
+# thread_pool:
+#   write:
+#     size: 4
+#     queue_size: 200
+#   search:
+#     size: number_of_available_processors
+#     queue_size: 1000
+
+# JVM
+# Note: ES_JAVA_OPTS is set in docker-compose.yml

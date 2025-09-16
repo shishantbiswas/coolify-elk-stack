@@ -1,0 +1,62 @@
+# Kibana server
+server.host: "0.0.0.0"
+server.name: kibana
+server.port: 5601
+
+# Elasticsearch
+elasticsearch.hosts: [ "http://elasticsearch:9200" ]
+elasticsearch.username: ${ELASTICSEARCH_USERNAME}
+elasticsearch.password: ${ELASTICSEARCH_PASSWORD}
+
+# Monitoring
+monitoring.kibana.collection.enabled: true
+monitoring.ui.container.kibana.enabled: true
+
+# Internationalization
+i18n.locale: en
+i18n.availableLocales: ["en"]
+i18n.defaultLocale: en
+
+# Set the timezone
+xpack.reporting.kibanaServer.timezone: UTC
+
+# Disable strict mode for i18n
+i18n.strict: false
+
+# Features
+xpack:
+  apm.ui.enabled: false
+  graph.enabled: false
+  ml.enabled: false
+  monitoring.enabled: true
+  reporting.enabled: false
+  security.enabled: true
+  grokdebugger.enabled: true
+  searchprofiler.enabled: true
+
+# Logging
+logging.verbose: true
+logging.dest: /usr/share/kibana/logs/kibana.log
+
+# Telemetry
+telemetry.enabled: false
+
+# Default app
+kibana.defaultAppId: "home"
+
+# Console
+transport.port: 5602
+
+# Optimize
+optimize.enabled: true
+
+# Plugins
+plugins.scanDirs: ["/usr/share/kibana/plugins"]
+
+# Paths
+pid.file: /usr/share/kibana/pid
+
+# SSL
+# server.ssl.enabled: true
+# server.ssl.certificate: /path/to/your/cert.pem
+# server.ssl.key: /path/to/your/key.pem

@@ -7,7 +7,6 @@ services:
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
-      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
       - bootstrap.memory_lock=true
     ulimits:
       memlock:
@@ -28,8 +27,6 @@ services:
     container_name: logstash
     volumes:
       - ./logstash/pipeline/:/usr/share/logstash/pipeline/
-    environment:
-      - LS_JAVA_OPTS=-Xmx1g -Xms1g
     depends_on:
       elasticsearch:
         condition: service_healthy

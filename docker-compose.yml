@@ -20,8 +20,6 @@ services:
       - elasticsearch-data:/usr/share/elasticsearch/data
     networks:
       - elk
-    ports:
-      - "9200:9200"
     healthcheck:
       test:
         [
@@ -42,15 +40,11 @@ services:
       - I18N_VERIFY_TRANSLATIONS=true
       - LANG=en_US.UTF-8
       - LC_ALL=en_US.UTF-8
-    ports:
-      - "5601:5601"
     depends_on:
       elasticsearch:
         condition: service_healthy
     volumes:
       - ./logstash/pipeline/:/usr/share/logstash/pipeline/
-    environment:
-      - LS_JAVA_OPTS=-Xmx1g -Xms1g
     networks:
       - elk
     healthcheck:
@@ -68,9 +62,6 @@ services:
       - SERVICE_URL_LOGSTASH_5000
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
       - ELASTIC_PASSWORD=${SERVICE_PASSWORD_ELASTICSEARCH}
-      - LS_JAVA_OPTS=-Xmx1g -Xms1g
-    ports:
-      - "5000:5000"
     depends_on:
       elasticsearch:
         condition: service_healthy
@@ -85,3 +76,11 @@ services:
       retries: 24
     networks:
       - elk
+
+networks:
+  elk:
+    driver: bridge
+
+volumes:
+  elasticsearch-data:
+    driver: local

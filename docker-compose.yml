@@ -1,77 +1,87 @@
-version: '3.8'
+# documentation: https://www.elastic.co/products/elasticsearch
+# slogan: Elasticsearch is free and Open Source, Distributed, RESTful Search Engine.
+# tags: search,engine,fulltext,full,text,elasticsearch
+# category: search
+# logo: svgs/elasticsearch.svg
+# port: 9200
 
 services:
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.9
+    image: docker.elastic.co/elasticsearch/elasticsearch-wolfi:8.19.0
     container_name: elasticsearch
     environment:
+      - SERVICE_URL_ELASTICSEARCH_9200
+      - ELASTIC_PASSWORD=${SERVICE_PASSWORD_ELASTICSEARCH}
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m # memory set to 512MB
       - discovery.type=single-node
-      - xpack.security.enabled=false
-      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
       - bootstrap.memory_lock=true
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
+      - xpack.security.http.ssl.enabled=false # Coolify handles SSL
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
-    ports:
-      - "9200:9200"
     networks:
       - elk
+    ports:
+      - "9200:9200"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9200"]
-      interval: 30s
+      test:
+        [
+          "CMD-SHELL",
+          "curl --user elastic:${SERVICE_PASSWORD_ELASTICSEARCH} --silent --fail http://localhost:9200/_cluster/health",
+        ]
+      interval: 10s
       timeout: 10s
-      retries: 5
-
-  logstash:
-    image: docker.elastic.co/logstash/logstash:7.17.9
-    container_name: logstash
+      retries: 24
+  kibana:
+    image: docker.elastic.co/kibana/kibana-wolfi:8.19.0
+    environment:
+      - SERVICE_URL_KIBANA_5601
+      - ELASTIC_PASSWORD=${SERVICE_PASSWORD_ELASTICSEARCH}
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - I18N_LOCALE=en
+      - I18N_STRICT_MODE=true
+      - I18N_VERIFY_TRANSLATIONS=true
+      - LANG=en_US.UTF-8
+      - LC_ALL=en_US.UTF-8
+    ports:
+      - "5601:5601"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
     volumes:
       - ./logstash/pipeline/:/usr/share/logstash/pipeline/
     environment:
+      - LS_JAVA_OPTS=-Xmx1g -Xms1g
+    networks:
+      - elk
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl --user elastic:${SERVICE_PASSWORD_ELASTICSEARCH} --silent --fail http://localhost:5601",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 24
+  logstash:
+    image: docker.elastic.co/logstash/logstash-wolfi:8.19.0
+    environment:
+      - SERVICE_URL_LOGSTASH_5000
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTIC_PASSWORD=${SERVICE_PASSWORD_ELASTICSEARCH}
       - LS_JAVA_OPTS=-Xmx1g -Xms1g
     ports:
       - "5000:5000"
     depends_on:
       elasticsearch:
         condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl --user elastic:${SERVICE_PASSWORD_ELASTICSEARCH} --silent --fail http://localhost:5000",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 24
     networks:
       - elk
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9600"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-
-  kibana:
-    image: docker.elastic.co/kibana/kibana:7.17.9
-    container_name: kibana
-    ports:
-      - "5601:5601"
-    environment:
-      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
-      I18N_LOCALE: en
-      I18N_STRICT_MODE: 'true'
-      I18N_VERIFY_TRANSLATIONS: 'true'
-      LANG: en_US.UTF-8
-      LC_ALL: en_US.UTF-8
-    depends_on:
-      elasticsearch:
-        condition: service_healthy
-    networks:
-      - elk
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5601"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-
-networks:
-  elk:
-    driver: bridge
-
-volumes:
-  elasticsearch-data:
-    driver: local

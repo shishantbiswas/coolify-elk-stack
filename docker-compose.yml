@@ -43,37 +43,29 @@ services:
     depends_on:
       elasticsearch:
         condition: service_healthy
-    volumes:
-      - ./logstash/pipeline/:/usr/share/logstash/pipeline/
     networks:
       - elk
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "curl --user elastic:${SERVICE_PASSWORD_ELASTICSEARCH} --silent --fail http://localhost:5601",
-        ]
-      interval: 10s
+      test: ["CMD", "curl", "-f", "http://localhost:5601"]
+      interval: 30s
       timeout: 10s
-      retries: 24
+      retries: 5
   logstash:
     image: docker.elastic.co/logstash/logstash-wolfi:8.19.0
     environment:
-      - SERVICE_URL_LOGSTASH_5000
+      - SERVICE_URL_LOGSTASH_9600
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
       - ELASTIC_PASSWORD=${SERVICE_PASSWORD_ELASTICSEARCH}
+    volumes:
+      - ./logstash/pipeline/:/usr/share/logstash/pipeline/
     depends_on:
       elasticsearch:
         condition: service_healthy
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "curl --user elastic:${SERVICE_PASSWORD_ELASTICSEARCH} --silent --fail http://localhost:5000",
-        ]
-      interval: 10s
+      test: ["CMD", "curl", "-f", "http://localhost:9600"]
+      interval: 30s
       timeout: 10s
-      retries: 24
+      retries: 5
     networks:
       - elk
 

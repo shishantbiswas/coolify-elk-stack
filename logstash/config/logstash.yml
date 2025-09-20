@@ -4,9 +4,9 @@ path.logs: /usr/share/logstash/logs
 
 # X-Pack Monitoring
 xpack.monitoring.enabled: true
-xpack.monitoring.elasticsearch.hosts: [ "http://elasticsearch:9200" ]
-xpack.monitoring.elasticsearch.username: elastic
-xpack.monitoring.elasticsearch.password: ${SERVICE_PASSWORD_ELASTICSEARCH}
+xpack.monitoring.elasticsearch.hosts: [ "${ELASTICSEARCH_HOSTS}" ]
+xpack.monitoring.elasticsearch.username: ${ELASTIC_USER}
+xpack.monitoring.elasticsearch.password: ${ELASTIC_PASSWORD}
 
 # Pipeline settings
 pipeline.workers: 2

@@ -34,12 +34,12 @@ services:
     environment:
       - SERVICE_URL_KIBANA_5601
       - ELASTIC_PASSWORD=${SERVICE_PASSWORD_ELASTICSEARCH}
+      - ELASTIC_USER=elastic
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
       - I18N_LOCALE=en
       - I18N_STRICT_MODE=true
       - I18N_VERIFY_TRANSLATIONS=true
       - LANG=en_US.UTF-8
-      - LC_ALL=en_US.UTF-8
     depends_on:
       elasticsearch:
         condition: service_healthy

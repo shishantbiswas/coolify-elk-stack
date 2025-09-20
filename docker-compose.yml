@@ -56,6 +56,7 @@ services:
       - SERVICE_URL_LOGSTASH_9600
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
       - ELASTIC_PASSWORD=${SERVICE_PASSWORD_ELASTICSEARCH}
+      - ELASTIC_USER=elastic
     volumes:
       - ./logstash/pipeline/:/usr/share/logstash/pipeline/
     depends_on:

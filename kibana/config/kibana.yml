@@ -5,8 +5,8 @@ server.port: 5601
 
 # Elasticsearch
 elasticsearch.hosts: [ "http://elasticsearch:9200" ]
-elasticsearch.username: ${ELASTICSEARCH_USERNAME}
-elasticsearch.password: ${ELASTICSEARCH_PASSWORD}
+elasticsearch.username: elastic
+elasticsearch.password: ${SERVICE_PASSWORD_ELASTICSEARCH}
 
 # Monitoring
 monitoring.kibana.collection.enabled: true
